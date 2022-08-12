@@ -288,7 +288,8 @@ async function createChart() {
     const textHeight = widgetFamily === 'large' ? 50 : 20;
     const availableHeight = size.height - verticalPadding * 2;
     const spacing = 4;
-    const barWidth = (size.width - ((casesData.length - 1) * spacing) - leftPadding) / casesData.length;
+    const barWidth = (size.width - ((casesData.length - 1) * spacing) - leftPadding) / casesData.length - 1;
+    // -1 to make text wrap in large widget
 
     casesData.forEach((day, i) => {
         const path = new Path();
