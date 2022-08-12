@@ -45,8 +45,8 @@ const widget = new ListWidget();
 
 const widgetFamily = config.widgetFamily || 'large';
 const widgetWidth = getWidgetWidth();
-const titleFont = Font.mediumSystemFont(widgetFamily === 'large' ? 11 : 10);
-const valueFont = Font.mediumSystemFont(widgetFamily === 'large' ? 20 : 16);
+const titleFont = Font.mediumRoundedSystemFont(10);
+const valueFont = Font.boldRoundedSystemFont(widgetFamily === 'large' ? 18 : 16);
 
 
 // -- START MAIN --
@@ -148,7 +148,7 @@ async function buildLayout(widget) {
             const lastUpdateStack = verticalStack.addStack();
             lastUpdateStack.addSpacer();
             const lastUpdate = lastUpdateStack.addText(lastUpdateText + lastUpdateFormatter.string(new Date(loadJSON()[country]['lastUpdateDate'])));
-            lastUpdate.font = Font.mediumSystemFont(12);
+            lastUpdate.font = Font.mediumRoundedSystemFont(12);
             lastUpdate.textColor = Color.lightGray();
             lastUpdateStack.addSpacer();
             verticalStack.addSpacer();
@@ -174,7 +174,7 @@ async function createHeader(widget) {
 
     const textStack = headerStack.addStack();
     const headerText = textStack.addText(covidStatusText);
-    headerText.font = Font.boldRoundedSystemFont(20);
+    headerText.font = Font.heavyRoundedSystemFont(20);
     headerStack.addSpacer(null);
 }
 
@@ -261,7 +261,7 @@ async function createChart() {
     const leftPadding = 52;
 
     ctx.setTextAlignedRight();
-    ctx.setFont(Font.mediumSystemFont(18));
+    ctx.setFont(Font.mediumRoundedSystemFont(18));
     ctx.setTextColor(Color.gray());
 
     let horizontalBars = new Path();
