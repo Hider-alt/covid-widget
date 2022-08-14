@@ -644,7 +644,7 @@ function isYesterdayDate(objectList) {
 
 async function checkRepoUpdates() {
     return new Promise((resolve, reject) => {
-        const request = new Request('https://raw.githubusercontent.com/Hider-alt/covid-widget/main/info.json');
+        const request = new Request('https://raw.githubusercontent.com/Hider-alt/covid-widget/main/version.json');
         request.loadJSON().then(json => {
             resolve(json['version'] !== VERSION);
         }).catch(err => {
