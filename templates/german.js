@@ -12,15 +12,15 @@ Some essential data are saved in iCloud (folder Scriptable/CovidStatusWidget).
 
 let titleText = 'Covid-19 status';
 
-const dailyCasesText = 'Daily cases';
-const dailyDeathsText = 'Daily deaths';
-const dailyTestsText = 'Daily tests';
-const activeCasesText = 'Active cases';
-const criticalCasesText = 'Critical cases';
-const positivityRateText = 'Positivity rate';
+const dailyCasesText = 'Tägliche Fälle';
+const dailyDeathsText = 'Tägliche Todesfälle';
+const dailyTestsText = 'Tägliche Puffer';
+const activeCasesText = 'Aktuelle Fälle';
+const criticalCasesText = 'Kritische Fälle';
+const positivityRateText = 'Positivitätsrate';
 
-const lastUpdateText = 'Last data update: ';
-const defaultCountry = 'USA';  // If you set a country in the widget parameter, this will be ignored.
+const lastUpdateText = 'Letzte Datenaktualisierung: ';
+const defaultCountry = 'Germany';  // If you set a country in the widget parameter, this will be ignored.
 
 /*--------------------------
 Version History:
