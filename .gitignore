@@ -7,3 +7,7 @@ node_modules
 
 # IDE stuff
 .idea
+
+# Images
+/img/fiverr/
+/img/screenshot/
