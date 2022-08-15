@@ -1,26 +1,3 @@
-/*
-Welcome to widget of Covid graph.
-
-- This widget works on version small, medium and large.
-- This widget will display the graph of Covid cases (and other Covid info) about the city set in the widget parameter (or in the variable below).
-- Data are taken from Worldometer and JHU CSSE.
-
-Some essential data are saved in iCloud (folder Scriptable/CovidStatusWidget).
-*/
-
-// CONFIG VARIABLES
-
-let titleText = 'Covid-19 status';
-
-const dailyCasesText = 'Tägliche Fälle';
-const dailyDeathsText = 'Tägliche Todesfälle';
-const dailyTestsText = 'Tägliche Puffer';
-const activeCasesText = 'Aktuelle Fälle';
-const criticalCasesText = 'Kritische Fälle';
-const positivityRateText = 'Positivitätsrate';
-
-const lastUpdateText = 'Letzte Datenaktualisierung: ';
-const defaultCountry = 'Germany';  // If you set a country in the widget parameter, this will be ignored.
 
 /*--------------------------
 Version History:

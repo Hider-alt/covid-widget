@@ -7,29 +7,26 @@ ___
 
 ## How to install
 1. Download Scriptable from the App Store.
-2. **Copy** the content of the file [`covid-widget.js`](./covid-widget.js)
-(or the content of a file found in [templates](./templates)) to the script editor.
-3. Open the Scriptable app and create a new script by clicking on the **+** button 
-(in the upper right corner).
-4. **Paste** the content of the file into the script editor.
-5. _(Optional) Translate the config variables on the top of the script to your desired language._
-   1. If you have copied the content of a file found in [templates](./templates), this step is not necessary.
-6. Click on done.
+2. **Download** a Scriptable file from the [releases page](https://github.com/Hider-alt/covid-widget/releases).
+3. Once downloaded, click the Share button.
+4. Click on the Scriptable icon.
+5. Click on "Add to My Scripts".
+6. Click on "Done".
 
 ## Add widget to the home-screen
-1. Add a new Scriptable widget.
-2. In "Script" select the name of the script you created in step 3 of [How to install](#how-to-install).
-3. In "Parameter" select the country you want to show in the widget.
+1. Add a new Scriptable widget to the home-screen.
+2. In "Script" select **CovidGraph**.
+3. In "Parameter" select the **country name** you want to show in the widget.
 
 ## How to update
 When there will be a new update, it will be written in the widget title. <br>
 
-1. To update the **widget**, just click on **it**, and it will redirect to the [GitHub repository]('https://github.com/Hider-alt/covid-widget').
-2. Copy the content of the file [`covid-widget.js`](./covid-widget.js) 
-(or the content of a file found in [templates](./templates)) to the script you created in step 3 of [How to install](#how-to-install).
-3. _(Optional) Translate the config variables on the top of the script to your desired language._
-   1. If you have copied the content of a file found in [templates](./templates), this step is not necessary.
-4. Click on done.
+1. To update the **widget**, just click on **it**, and it will redirect to the [releases page](https://github.com/Hider-alt/covid-widget/releases).
+2. Repeat from step 3 of [How to install](#how-to-install) section.
+3. Delete CovidGraph from your scripts.
+4. Click on the three dots in the upper right corner of the script named `CovidGraph 1`.
+5. Click on `CovidGraph 1` on the top and rename the script to `CovidGraph`.
+6. Click on "Done".
 
 ## Features
 - The widget shows a graph of Covid cases for the last **8 days** in the **small** or **medium** version and 
