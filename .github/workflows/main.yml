@@ -8,11 +8,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'src/**'
+      - '**.js'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'src/**'
+      - '**.js'
 
 
   # Allows you to run this workflow manually from the Actions tab
