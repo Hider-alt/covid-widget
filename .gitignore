@@ -11,3 +11,4 @@ node_modules
 # Images
 /img/fiverr/
 /img/screenshot/
+/img/*.psd
