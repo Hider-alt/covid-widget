@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "v1",
   "title": "Initial release",
   "description": "Features: \n- Covid cases graph \n- Covid info per country \n- Custom country selection"
 }

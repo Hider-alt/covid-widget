@@ -4,7 +4,7 @@ Version History:
 v1.0 -> Initial release
 --------------------------*/
 
-const VERSION = '1.0';
+const VERSION = 'v1';
 const areRepoUpdatesAvailable = await checkRepoUpdates();
 
 const red = new Color('#ff0000', 0.8);
@@ -41,7 +41,7 @@ if (await areDataUpdatesAvailable()) {
 
 if (areRepoUpdatesAvailable) {
     titleText += ' (new version available)';
-    widget.url = 'https://github.com/Hider-alt/covid-widget';
+    widget.url = 'https://github.com/Hider-alt/covid-widget/releases/latest';
 } else
     widget.url = `https://www.worldometers.info/coronavirus/country/${data.country}/`;
 
