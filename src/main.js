@@ -429,7 +429,7 @@ async function loadData() {
         testPositivityValue = (yesterdayCovid['todayCases'] / testsValue * 100).toFixed(2) + '%';
     }
 
-    testsValue = testsValue === 0 && casesValue !== '0' ? '--' : numberToWord(testsValue);
+    testsValue = testsValue === 0 ? '--' : numberToWord(testsValue);
 
     // End of setup
 
