@@ -6,7 +6,7 @@ This Widget shows a graph of Covid cases for the last 8/15 days of the selected 
 ___
 
 ## How to install
-<sup>[Click here to see images of the instructions](./img/install.png)</sup>
+<sup>[Click here to see images of the instructions](./img/install.md)</sup>
 
 1. Download Scriptable from the App Store.
 2. **Download** a Scriptable file from the [release page](https://github.com/Hider-alt/covid-widget/releases/latest).
@@ -16,14 +16,14 @@ ___
 6. Click on "Done".
 
 ## Add widget to the home-screen
-<sup>[Click here to see images of the instructions](./img/add-to-home.png)</sup>
+<sup>[Click here to see images of the instructions](./img/add-to-home.md)</sup>
 
 1. Add a new Scriptable widget to the home-screen.
 2. In "Script" select **CovidGraph**.
 3. In "Parameter" select the **country name** you want to show in the widget.
 
 ## How to update
-<sup>[Click here to see images of the instructions](./img/update.png)</sup>
+<sup>[Click here to see images of the instructions](./img/update.md)</sup>
 
 When there will be a new update, it will be written in the widget title. <br>
 
