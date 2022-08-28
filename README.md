@@ -48,6 +48,9 @@ for the last **15 days** in the **large** version for the selected country in th
 download data even if the time is not after 12:00 PM.
 - If daily data are not available, the widget will show the last available data.
 
+> **Note**: Some data countries are partially available, so the graph could be partially empty (e.g. UK).
+This is a problem of the Covid API.
+
 ## Requirements
 - Scriptable
 - iPhone/iPad/Mac
