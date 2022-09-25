@@ -1,7 +1,7 @@
 [<img src="update.png" alt="Image">](update.png)
 
 ## How to update
-When there will be a new update, it will be written in the widget title. <br>
+When there will be a new update, it will be written in the widget title.
 
 1. To update the **widget**, just click on **it**, and it will redirect to the [release page](https://github.com/Hider-alt/covid-widget/release).
 2. Close momentarily Safari.

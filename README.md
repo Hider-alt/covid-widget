@@ -64,7 +64,6 @@ This happens due to countries not reporting cases daily
 ## What's next?
 - Add an optional line in the graph to show the positivity rate.
 - Add arrow near each data to show the direction of that data trend.
-- Change APIs.
 
 ## Source
 - [Covid-API-Worldometer](https://github.com/Hider-alt/Worldometer_Covid_History)
