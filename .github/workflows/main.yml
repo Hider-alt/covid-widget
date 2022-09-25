@@ -68,9 +68,9 @@ jobs:
       - name: Create Scriptable files from src folder
         id: create_files
         run: |
-          # Run bash file in .github/create_files.sh
-          chmod +x "${GITHUB_WORKSPACE}/.github/create_files.sh"
-          "${GITHUB_WORKSPACE}/.github/create_files.sh"
+          # Run bash file in .github/scripts/create_files.sh
+          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/create_files.sh"
+          "${GITHUB_WORKSPACE}/.github/scripts/create_files.sh"
           
           # Echo the files that were created
           echo "Files created:"
@@ -86,3 +86,23 @@ jobs:
           files: ${{ steps.create_files.outputs.output_path }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-tag: ${{ steps.tag.outputs.value }}
+
+      # Create widget.js file
+      - name: Create widget.js file
+        id: create_widget
+        run: |
+          # Run bash file in .github/scripts/create_js_widget_file.sh
+          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/create_js_widget_file.sh"
+          "${GITHUB_WORKSPACE}/.github/scripts/create_js_widget_file.sh"
+          
+          echo "JS widget file created"
+          
+          # Set output path to release folder
+          echo ::set-output name=output_path::"${GITHUB_WORKSPACE}/widget.js"
+
+      # Commit & push widget.js file
+      - name: Commit & push widget.js file
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automated widget.js file update
+          file_pattern: ${{ steps.create_widget.outputs.output_path }}
