@@ -42,14 +42,8 @@ for the last **15 days** in the **large** version for the selected country in th
 - To update the **widget**, just click on **it**, and it will redirect to the [latest release page](https://github.com/Hider-alt/covid-widget/release)
 - Then you will have just to follow the instructions of [How to update](#how-to-update) section.
 
-### How it updates data
-- The widget will try to download new data only after 12:00 PM (because before daily data aren't released).
-- If a new day is started, but the data for the previous day are not released, the widget will try to 
-download data even if the time is not after 12:00 PM.
-- If daily data are not available, the widget will show the last available data.
-
 > **Note**: Some data countries are partially available, so the graph could be partially empty (e.g. UK).
-This is a problem of the Covid API.
+This happens due to countries not reporting cases daily
 
 ## Requirements
 - Scriptable
@@ -59,10 +53,13 @@ This is a problem of the Covid API.
 ## FAQ
 
 ### How can I change the country?
->  In the parameter, select the country you want to show in the widget.
+> In the parameter of the Widget, write the country you want to show.
 
 ### What sizes are available?
 > The widget has 3 sizes: **small**, **medium** and **large**.
+
+### What are data around the graph referring to?
+> The data around the graph refers to data of the **last day**.
 
 ## What's next?
 - Add an optional line in the graph to show the positivity rate.
@@ -70,7 +67,7 @@ This is a problem of the Covid API.
 - Change APIs.
 
 ## Source
-- [disease.sh](https://disease.sh/docs/?urls.primaryName=version%203.0.0)
+- [Covid-API-Worldometer](https://github.com/Hider-alt/Worldometer_Covid_History)
 
 ## Credits
 © 2022 Hider

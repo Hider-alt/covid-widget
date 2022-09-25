@@ -10,5 +10,5 @@ const activeCasesText = 'Active cases';
 const criticalCasesText = 'Critical cases';
 const positivityRateText = 'Positivity rate';
 
-const lastUpdateText = 'Last data update: ';
+const lastUpdateText = 'Last update: ';
 const defaultCountry = 'USA';  // If you set a country in the widget parameter, this will be ignored.

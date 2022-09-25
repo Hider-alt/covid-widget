@@ -2,15 +2,19 @@
 /*--------------------------
 Version History:
 v1.0 -> Initial release
+v1.1 -> Added header for small size, added cyan color, improvements, changed APIs, and bug fixes
 --------------------------*/
 
-const VERSION = 'v1';
+const VERSION = 'v1.1';
 const areRepoUpdatesAvailable = await checkRepoUpdates();
 
-const red = new Color('#ff0000', 0.8);
-const darkRed = new Color('#ba0000', 0.8);
-const green = new Color('#00ff00', 0.8);
-const darkGreen = new Color('#00ba00', 0.8);
+const alpha = 0.8;
+const red = new Color('#ff0000', alpha);
+const darkRed = new Color('#ba0000', alpha);
+const green = new Color('#00ff00', alpha);
+const darkGreen = new Color('#00ba00', alpha);
+const cyan = new Color('#60a5fa', alpha);
+const darkCyan = new Color('#177dfc', alpha);
 let darkColor = undefined; // Assigned on graph creation
 
 const graphDateFormatter = new DateFormatter();
@@ -18,32 +22,26 @@ graphDateFormatter.dateFormat = 'E dd';
 const dataDateFormatter = new DateFormatter();
 dataDateFormatter.dateFormat = 'M/d/yy';
 const lastUpdateFormatter = new DateFormatter();
-lastUpdateFormatter.dateFormat = 'dd/MM/yy HH:mm';
+lastUpdateFormatter.dateFormat = 'E dd MMM HH:mm';
 
 const country = args.widgetParameter || defaultCountry;
 const widget = new ListWidget();
 
 const widgetFamily = config.widgetFamily || 'large';
 const widgetWidth = getWidgetWidth();
-const titleFont = Font.mediumRoundedSystemFont(10);
+const titleFont = Font.mediumRoundedSystemFont(widgetFamily === 'small' ? 8 : 10);
 const valueFont = Font.boldRoundedSystemFont(widgetFamily === 'large' ? 18 : 16);
 
 
 // -- START MAIN --
 
 
-let data;
-if (await areDataUpdatesAvailable()) {
-    data = await loadData();
-} else {
-    data = loadJSON()[country]['lastUpdateJSON'];
-}
+let data = await loadData();
 
-if (areRepoUpdatesAvailable) {
-    titleText += ' (new version available)';
+if (areRepoUpdatesAvailable)
     widget.url = 'https://github.com/Hider-alt/covid-widget/releases/latest';
-} else
-    widget.url = `https://www.worldometers.info/coronavirus/country/${data.country}/`;
+else
+    widget.url = `https://www.worldometers.info/coronavirus/country/${data.country.replace(/ /g, '-')}/`;
 
 await buildLayout(widget);
 
@@ -59,13 +57,15 @@ async function buildLayout(widget) {
 
     switch (widgetFamily) {
         case 'small':
-            widget.setPadding(12, 12, 12, 12);
+            widget.setPadding(6, 12, 12, 12);
+            await createHeader(widget);
 
             const outerVerticalStack = widget.addStack();
             outerVerticalStack.layoutVertically();
             outerVerticalStack.centerAlignContent();
 
             const dataRow = outerVerticalStack.addStack();
+            dataRow.setPadding(4, 0, 0, 0)
             data.cases.stringValue = numberToWord(data.cases.stringValue, true);
             createStack(dataRow, data.cases);
             dataRow.addSpacer();
@@ -126,13 +126,13 @@ async function buildLayout(widget) {
             bottomRow.addSpacer();
             createStack(bottomRow, data.active, true, true);
             bottomRow.addSpacer();
-            createStack(bottomRow, data.testPositivity, true, true);
+            createStack(bottomRow, data.positivityRate, true, true);
             bottomRow.addSpacer();
 
             verticalStack.addSpacer();
             const lastUpdateStack = verticalStack.addStack();
             lastUpdateStack.addSpacer();
-            const lastUpdate = lastUpdateStack.addText(lastUpdateText + lastUpdateFormatter.string(new Date(loadJSON()[country]['lastUpdateDate'])));
+            const lastUpdate = lastUpdateStack.addText(lastUpdateText + lastUpdateFormatter.string(new Date()));
             lastUpdate.font = Font.mediumRoundedSystemFont(12);
             lastUpdate.textColor = Color.lightGray();
             lastUpdateStack.addSpacer();
@@ -146,21 +146,40 @@ async function buildLayout(widget) {
 
 async function createHeader(widget) {
     const outerStack = widget.addStack();
-    outerStack.size = new Size(widgetWidth, 0);
-    outerStack.backgroundColor = Color.dynamic(new Color('#f2f1f6'), new Color('#2c2c2e'));
+    if (widgetFamily === 'small') {
+        let title = data.country.toUpperCase();
+        if (areRepoUpdatesAvailable)
+            title += ' (new update)';
 
-    const headerStack = outerStack.addStack();
-    headerStack.setPadding(8, 16, 8, 0);
+        const headerTitle = outerStack.addText(title);
+        headerTitle.font = Font.mediumRoundedSystemFont(10);
+        headerTitle.textColor = Color.lightGray();
+    } else {
+        outerStack.size = new Size(widgetWidth, 0);
+        outerStack.backgroundColor = Color.dynamic(new Color('#f2f1f6'), new Color('#2c2c2e'));
 
-    const widgetImage = headerStack.addImage(await loadFlag(data['flag']));
-    widgetImage.imageSize = new Size(37, 25);
-    widgetImage.cornerRadius = 4;
-    headerStack.addSpacer(8);
+        const headerStack = outerStack.addStack();
+        headerStack.setPadding(8, 16, 8, 0);
 
-    const textStack = headerStack.addStack();
-    const headerText = textStack.addText(titleText);
-    headerText.font = Font.heavyRoundedSystemFont(20);
-    headerStack.addSpacer(null);
+        const widgetImage = headerStack.addImage(await loadFlag(data['flag']));
+        widgetImage.imageSize = new Size(37, 25);
+        widgetImage.cornerRadius = 4;
+        headerStack.addSpacer(8);
+
+        const textStack = headerStack.addStack();
+        textStack.layoutVertically();
+
+        const headerText = textStack.addText(titleText);
+        headerText.font = Font.heavyRoundedSystemFont(20);
+
+        if (areRepoUpdatesAvailable) {
+            const updateText = textStack.addText("New update available (click on the widget to update)");
+            updateText.font = Font.mediumRoundedSystemFont(10);
+            updateText.textColor = Color.lightGray();
+        }
+
+        headerStack.addSpacer(null);
+    }
 }
 
 function createStack(superView, data, inverse = false, centerAlignText = false) {
@@ -218,7 +237,7 @@ async function createChart() {
 
     switch (widgetFamily) {
         case 'small':
-            size = new Size(400, 300);
+            size = new Size(500, 350);
             casesData = timeline.slice(timeline.length - 8, timeline.length);
             break;
         case 'medium':
@@ -243,7 +262,7 @@ async function createChart() {
 
     // Draw horizontal lines
     const verticalPadding = widgetFamily === 'large' ? 40 : 20;
-    const leftPadding = 52;
+    const leftPadding = 62;
 
     ctx.setTextAlignedRight();
     ctx.setFont(Font.mediumRoundedSystemFont(18));
@@ -255,7 +274,7 @@ async function createChart() {
         horizontalBars.move(new Point(leftPadding, yPoint));
         horizontalBars.addLine(new Point(size.width, yPoint));
         const text = numberToWord(Math.round(maximum / 4 * i), true);
-        ctx.drawTextInRect(String(text), new Rect(0, yPoint - 12, 50, 20));
+        ctx.drawTextInRect(String(text), new Rect(0, yPoint - 12, 60, 20));
     }
 
     ctx.addPath(horizontalBars);
@@ -263,18 +282,25 @@ async function createChart() {
     ctx.strokePath()
 
     // Find color to use
-    const areCasesGrowing = casesData[casesData.length - 8].amount - casesData[casesData.length - 1].amount < 0;
-    const color = areCasesGrowing ? red : green;
-    darkColor = areCasesGrowing ? darkRed : darkGreen;
+    const colors = findColors(casesData[casesData.length - 8].amount, casesData[casesData.length - 1].amount);
+    const color = colors[0];
+    darkColor = colors[1];
 
     // Draw bars
     ctx.setTextAlignedCenter();
 
-    const textHeight = widgetFamily === 'large' ? 50 : 20;
     const availableHeight = size.height - verticalPadding * 2;
     const spacing = 4;
-    const barWidth = (size.width - ((casesData.length - 1) * spacing) - leftPadding) / casesData.length - 1;
-    // -1 to make text wrap in large widget
+    const barWidth = (size.width - ((casesData.length - 1) * spacing) - leftPadding) / casesData.length;
+
+    let textHeight = 20;
+    let textWidth = barWidth;
+    if (widgetFamily === "large") {
+        textWidth = barWidth - 1;
+        textHeight = 50;
+    } else if (widgetFamily === "small") {
+        textWidth = barWidth - 8;
+    }
 
     casesData.forEach((day, i) => {
         const path = new Path();
@@ -286,16 +312,14 @@ async function createChart() {
         path.addRoundedRect(rect, 4, 4);
         ctx.addPath(path);
 
-        if (i === casesData.length - 1)
-            ctx.setFillColor(darkColor);
-        else if (i === casesData.length - 8 && widgetFamily === 'large')
+        if (i === casesData.length - 1 || (i === casesData.length - 8 && widgetFamily === 'large'))
             ctx.setFillColor(darkColor);
         else
             ctx.setFillColor(color);
 
         ctx.fillPath();
 
-        const textRect = new Rect(x, size.height - verticalPadding, barWidth, textHeight);
+        const textRect = new Rect(x, size.height - verticalPadding, textWidth, textHeight);
         const date = new Date(day.date);
 
         ctx.drawTextInRect(graphDateFormatter.string(date), textRect);
@@ -307,165 +331,56 @@ async function createChart() {
 // END WIDGET CREATION FUNCTIONS
 // -- START DATA FUNCTIONS --
 
-async function areDataUpdatesAvailable() {
-    const jsonData = loadJSON();
-    const lastUpdateDate = new Date(jsonData[country].lastUpdateDate);
-    const nowDate = new Date();
-
-    if (!(country in jsonData))
-        return true;
-
-    if (isJSONEmpty(jsonData[country].lastUpdateJSON)) // Only when the file has just been created
-        return true;
-
-    // Check that at least the day before is saved
-    if (!isYesterdayDate(jsonData[country].lastUpdateJSON.casesTimeline))
-        return true;
-
-    if (nowDate.getHours() < 12) // Before 12:00 new daily data aren't yet released
-        return false;
-
-    // Check if last update was today after 12:00
-    return !(lastUpdateDate.getDate() === nowDate.getDate() && lastUpdateDate.getHours() >= 12);
-}
-
 async function loadData() {
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const twoDaysAgo = new Date();
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    let daysToFetch = 9;
+    if (widgetFamily === 'large' || widgetFamily === 'extraLarge')
+        daysToFetch = 16;
 
-    const todayCovid = await requestJSON(`https://disease.sh/v3/covid-19/countries/${country}?allowNull=true&strict=true`);
+    const history = await requestJSON(`https://covid-api-worldometer.herokuapp.com/api/history/${country}?lastDays=${daysToFetch}`);
+    const countryInfo = await requestJSON(`https://covid-api-worldometer.herokuapp.com/api/countries/${country}/info`);
 
-    if ("message" in todayCovid)
-        throw new Error(todayCovid.message);
+    // If dailyCases are null for the last day, then remove the last day
+    if (history[history.length - 1]["dailyCases"] === null)
+        history.pop();
 
-    let twoDaysAgoCovid;
-    const jsonData = loadJSON();
+    const casesTimeline = history.map(day => {
+        return {
+            date: day.date,
+            amount: day["dailyCases"]
+        }
+    });
 
-    // If todayCases is null, it means that the data today are not available yet
-    if (todayCovid['todayCases'] === null || todayCovid['todayDeaths'] === null)
-        // Check if there are stored data and that there's the yesterday data
-        if (!isJSONEmpty(jsonData[country].lastUpdateJSON) && isYesterdayDate(jsonData[country].lastUpdateJSON.casesTimeline))
-            return jsonData[country]['lastUpdateJSON'];
-        else
-            twoDaysAgoCovid = await requestJSON(`https://disease.sh/v3/covid-19/countries/${country}?twoDaysAgo=true&strict=true`);
+    const lastDay = history[history.length - 1];
 
-    let yesterdayCovid = await requestJSON(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=true&strict=true`);
-
-    // If todayCases are not null before 12, they are referring to the previous day
-    if ((todayCovid['todayCases'] !== null || todayCovid['todayDeaths'] !== null) && today.getHours() < 12) {
-        twoDaysAgoCovid = JSON.parse(JSON.stringify(yesterdayCovid)); // Deep copy
-        yesterdayCovid = JSON.parse(JSON.stringify(todayCovid)); // Deep copy
-        todayCovid['todayCases'] = null;
-        todayCovid['todayDeaths'] = null;
-    }
-
-    const historicalCovid = await requestJSON(`https://disease.sh/v3/covid-19/historical/${country}?lastdays=20`);
-
-    const casesTimeline = historicalCovid['timeline']['cases'];
-
-    // Convert casesTimeline to array of objects
-    let casesArray = [];
-    for (const key in casesTimeline) {
-        casesArray.push({
-            date: key,
-            amount: casesTimeline[key]
-        });
-    }
-
-    casesArray = convertCumulativeToDailyCases(casesArray);
-
-    if (todayCovid['todayCases'] !== null) {
-        // Add today data to historical data
-        const todayDateString = dataDateFormatter.string(today);
-        casesArray.push({
-            date: todayDateString,
-            amount: todayCovid['todayCases']
-        });
-    }
-
-    // Check that yesterday isn't already in the casesArray and that yesterday cases are same as two days ago (Worldometer bug)
-    if (!isYesterdayDate(casesArray) && yesterdayCovid['todayCases'] !== casesArray.find(day => day.date === dataDateFormatter.string(twoDaysAgo)).amount) {
-        const yesterdayDateString = dataDateFormatter.string(yesterday);
-
-        // Add yesterday data to historical data
-        casesArray.push({
-            date: yesterdayDateString,
-            amount: yesterdayCovid['todayCases']
-        });
-    }
-
-    // Setup all title and values for the widget
-    let casesValue;
-    let deathsValue;
-    let activeCasesValue;
-    let criticalCasesValue;
-
-    if (todayCovid['todayCases'] !== null && todayCovid['todayDeaths'] !== null) {
-        activeCasesValue = numberToWord(todayCovid['active']);
-        criticalCasesValue = numberToWord(todayCovid['critical']);
-        casesValue = numberToWord(todayCovid['todayCases']);
-        deathsValue = numberToWord(todayCovid['todayDeaths']);
-    } else {
-        activeCasesValue = numberToWord(yesterdayCovid['active']);
-        criticalCasesValue = numberToWord(yesterdayCovid['critical']);
-        casesValue = numberToWord(yesterdayCovid['todayCases']);
-        deathsValue = numberToWord(yesterdayCovid['todayDeaths']);
-    }
-
-    let testsValue;
-    let testPositivityValue;
-    if (todayCovid['tests'] !== yesterdayCovid['tests']) {
-        testsValue = todayCovid['tests'] - yesterdayCovid['tests'];
-        testPositivityValue = (todayCovid['todayCases'] / testsValue * 100).toFixed(2) + '%';
-    } else {
-        if (isJSONEmpty(twoDaysAgoCovid))
-            testsValue = 0;
-        else
-            testsValue = yesterdayCovid['tests'] - twoDaysAgoCovid['tests'];
-
-        testPositivityValue = (yesterdayCovid['todayCases'] / testsValue * 100).toFixed(2) + '%';
-    }
-
-    testsValue = testsValue === 0 ? '--' : numberToWord(testsValue);
-
-    // End of setup
-
-    const data = {
-        country: todayCovid['country'],
-        flag: todayCovid['countryInfo']['flag'],
-        casesTimeline: casesArray,
+    return {
+        country: countryInfo['country'],
+        flag: countryInfo['flag'],
+        casesTimeline: casesTimeline,
         cases: {
             title: dailyCasesText,
-            stringValue: casesValue,
+            stringValue: numberToWord(lastDay["dailyCases"]),
         },
         deaths: {
             title: dailyDeathsText,
-            stringValue: deathsValue,
+            stringValue: numberToWord(lastDay["dailyDeaths"]),
         },
         active: {
             title: activeCasesText,
-            stringValue: activeCasesValue,
+            stringValue: numberToWord(lastDay["active"]),
         },
         critical: {
             title: criticalCasesText,
-            stringValue: criticalCasesValue,
+            stringValue: numberToWord(lastDay["critical"]),
         },
         tests: {
             title: dailyTestsText,
-            stringValue: testsValue,
+            stringValue: numberToWord(lastDay["dailyTests"]),
         },
-        testPositivity: {
+        positivityRate: {
             title: positivityRateText,
-            stringValue: testsValue === '--' ? '--' : testPositivityValue,
+            stringValue: calculatePositivityRate(lastDay["dailyCases"], lastDay["dailyTests"]),
         }
     };
-
-    await updateRefresh(data);
-
-    return data;
 }
 
 async function loadFlag(flagUrl) {
@@ -474,56 +389,15 @@ async function loadFlag(flagUrl) {
 }
 
 // END DATA FUNCTIONS
-// -- START STORING FUNCTIONS --
-
-/**
- * Returns the path to the info.json file.
- */
-function createWidgetFolderIfNoExist() {
-    const fm = FileManager.iCloud();
-    let filePath = fm.joinPath(fm.documentsDirectory(), 'covidStatusWidget/info.json');
-
-    if (!fm.fileExists(filePath)) {
-        fm.createDirectory(fm.joinPath(fm.documentsDirectory(), 'covidStatusWidget'));
-        fm.writeString(filePath, JSON.stringify({[country]: {lastUpdateDate: new Date().setDate(new Date().getDate() - 1), lastUpdateJSON: {}}}));
-    } else {
-        const jsonRaw = fm.readString(filePath);
-        const jsonData = JSON.parse(jsonRaw);
-
-        // Add country to json if it doesn't exist
-        if (!(country in jsonData)) {
-            jsonData[country] = {lastUpdateDate: new Date().setDate(new Date().getDate() - 1), lastUpdateJSON: {}};
-            fm.writeString(filePath, JSON.stringify(jsonData));
-        }
-    }
-
-    return filePath;
-}
-
-async function updateRefresh(newData) {
-    const json = loadJSON();
-
-    json[country]['lastUpdateDate'] = new Date();
-    json[country]['lastUpdateJSON'] = newData;
-
-    saveJSON(json);
-}
-
-function loadJSON() {
-    const filePath = createWidgetFolderIfNoExist()
-    const fm = FileManager.iCloud();
-    const jsonRaw = fm.readString(filePath);
-    return JSON.parse(jsonRaw);
-}
-
-function saveJSON(json) {
-    const fm = FileManager.iCloud();
-    const filePath = createWidgetFolderIfNoExist()
-    fm.writeString(filePath, JSON.stringify(json));
-}
-
-// END STORING FUNCTIONS
 // -- START UTILS FUNCTIONS --
+
+function calculatePositivityRate(cases, tests) {
+    if (tests === null || tests === 0)
+        return '--';
+
+    const positivityRate = (cases / tests) * 100;
+    return positivityRate.toFixed(1) + '%';
+}
 
 function numberToWord(number, convertK = false) {
     // Check if number is a string
@@ -532,20 +406,25 @@ function numberToWord(number, convertK = false) {
         number = wordToNumber(number);
     }
 
-    if (number < 0)
+    if (number < 0 || number === null)
         return '--';
 
     if (number > 1000000000)
         // Take the first three digits and ad 'B'
-        return (number / 1000000000).toFixed(2) + 'B';
+        return (number / 1000000000).toFixed(1) + 'B';
 
     if (number > 1000000)
         // Take first 3 digits and add 'M'
-        return (number / 1000000).toFixed(2) + 'M';
+        return (number / 1000000).toFixed(1) + 'M';
 
-    if (number > 1000 && convertK)
+    if (number > 1000 && convertK) {
         // Take first 3 digits and add 'K'
-        return Math.round(number / 1000) + 'K';
+        let n = number / 1000;
+        if (n < 100)
+            return n.toFixed(1) + 'K';
+        else
+            return Math.round(n) + 'K';
+    }
 
     // Add a space every three digits
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -565,27 +444,6 @@ function wordToNumber(word){
     return parseFloat(word);
 }
 
-function convertCumulativeToDailyCases(casesTimeline) {
-    // Sort by date
-    casesTimeline.sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
-
-    casesTimeline.forEach((day, i) => {
-        if (i !== 0)
-            day['dailyCases'] = day['amount'] - casesTimeline[i - 1]['amount'];
-    });
-
-    casesTimeline.splice(0, 1);
-
-    casesTimeline.forEach((day) => {
-        day['amount'] = day['dailyCases'];
-        delete day['dailyCases'];
-    });
-
-    return casesTimeline;
-}
-
 function getWidgetWidth() {
     switch (widgetFamily) {
         case 'extraLarge':
@@ -599,19 +457,25 @@ function getWidgetWidth() {
     }
 }
 
+function findColors(initialCases, endCases) {
+    if (initialCases === null || endCases === null)
+        return [cyan, darkCyan];
+
+    // Check if endCases is inside +- 5% of initialCases
+    if (endCases <= initialCases * 1.05 && endCases >= initialCases * 0.95)
+        return [cyan, darkCyan];
+
+    return endCases < initialCases ? [green, darkGreen] : [red, darkRed];
+}
+
 async function requestJSON(url) {
-    const request = new Request(url);
-    return await request.loadJSON();
-}
+    const response = new Request(url);
+    const JSONResponse = await response.loadJSON();
 
-function isJSONEmpty(json) {
-    return typeof json !== 'object' || (Object.keys(json).length === 0 && json.constructor === Object);
-}
+    if ("error" in JSONResponse)
+        throw new Error(JSONResponse["error"]);
 
-function isYesterdayDate(objectList) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return objectList.find(day => day.date === dataDateFormatter.string(yesterday)) !== undefined;
+    return JSONResponse;
 }
 
 // END UTILS FUNCTIONS

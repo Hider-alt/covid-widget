@@ -1,5 +1,5 @@
 {
-  "version": "v1",
-  "title": "Initial release",
-  "description": "Features: \n- Covid cases graph \n- Covid info per country \n- Custom country selection"
+  "version": "v1.1",
+  "title": "New header & new color",
+  "description": "Follow [this guide](https://github.com/Hider-alt/covid-widget/blob/v1/img/update.md) to update the widget\n\nChanges:\n- Added header for small size\n- Added cyan color for stable cases trend\n- You can now use country names with spaces (e.g. New Zealand)\n- Improved text when new update is available\n- Changed APIs"
 }
