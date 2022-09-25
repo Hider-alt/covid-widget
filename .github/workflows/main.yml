@@ -66,11 +66,11 @@ jobs:
 
       # Create files to release
       - name: Create Scriptable files from src folder
-        id: create_files
+        id: create_scriptable_files
         run: |
-          # Run bash file in .github/scripts/create_files.sh
-          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/create_files.sh"
-          "${GITHUB_WORKSPACE}/.github/scripts/create_files.sh"
+          # Run bash file in .github/scripts/create_scriptable_files.sh
+          chmod +x "${GITHUB_WORKSPACE}/.github/scripts/create_scriptable_files.sh"
+          "${GITHUB_WORKSPACE}/.github/scripts/create_scriptable_files.sh"
           
           # Echo the files that were created
           echo "Files created:"
@@ -83,7 +83,7 @@ jobs:
       - name: Upload assets
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: ${{ steps.create_files.outputs.output_path }}
+          files: ${{ steps.create_scriptable_files.outputs.output_path }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-tag: ${{ steps.tag.outputs.value }}
 
