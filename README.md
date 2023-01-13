@@ -1,3 +1,4 @@
+# NO LONGER MAINTAINED
  # Covid iOS Widget
 This Widget shows a graph of Covid cases for the last 8/15 days of the selected country. <br>
 
